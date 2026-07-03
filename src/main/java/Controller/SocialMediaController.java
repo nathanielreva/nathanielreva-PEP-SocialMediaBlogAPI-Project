@@ -1,5 +1,11 @@
 package Controller;
 
+import java.sql.SQLException;
+import java.util.Map;
+
+import Exception.UsernameExistsException;
+import Model.Account;
+import Service.UserRegistrationService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -9,6 +15,8 @@ import io.javalin.http.Context;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
+    private final UserRegistrationService userRegistrationService = new UserRegistrationService();
+    
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -16,8 +24,16 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("example-endpoint", this::exampleHandler);
 
+        app.exception(IllegalArgumentException.class, (e, ctx) -> {
+            ctx.status(400).json(Map.of("exception", e.getMessage()));
+        });
+
+        app.exception(UsernameExistsException.class, (e, ctx) -> {
+            ctx.status(400).json(Map.of("exeption", e.getMessage()));
+        });
+        
+        app.post("register", this::register );
         return app;
     }
 
@@ -25,9 +41,17 @@ public class SocialMediaController {
      * This is an example handler for an example endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
+
+
+    private void register(Context context) throws SQLException{
+        Account account = context.bodyAsClass(Account.class); 
+
+        String username = account.getUsername();
+        String password = account.getPassword();
+
+        Account register = userRegistrationService.register(username, password);
+
+        context.json(register);
+        
     }
-
-
 }
