@@ -5,6 +5,8 @@ import java.util.Map;
 
 import Exception.UsernameExistsException;
 import Model.Account;
+import Model.Message;
+import Service.MessageService;
 import Service.UserAuthenticationService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -35,6 +37,7 @@ public class SocialMediaController {
         
         app.post("register", this::register );
         app.post("login", this::login);
+        app.post("messages", this::messages);
         return app;
 
     
@@ -65,5 +68,16 @@ public class SocialMediaController {
         context.status(logged_in ? 200 : 401).json(Map.of(
             "logged_in" , logged_in
         ));
+    }
+
+    private void messages(Context context) throws SQLException{
+
+        Message message = context.bodyAsClass(Message.class);
+
+        MessageService ms = new MessageService();
+        
+        context.json(ms.addMessage(message));
+
+
     }
 }

@@ -44,6 +44,16 @@ public class AccountDAO {
 
     }
 
+    public boolean isUserIdExists(int id) throws SQLException{
+        String query = "SELECT * FROM account WHERE account_id = ?";
+
+        PreparedStatement ps = conx.prepareStatement(query);
+        ps.setInt(1, id);
+
+        ResultSet rs = ps.executeQuery();
+        return rs.next();
+    }
+
     public String getAccountPasswordByUsername(String username) throws SQLException{
         String query = "SELECT password FROM account WHERE username = ? ";
 

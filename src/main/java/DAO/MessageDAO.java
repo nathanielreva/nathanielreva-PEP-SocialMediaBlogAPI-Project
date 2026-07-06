@@ -1,0 +1,35 @@
+package DAO;
+
+import Util.ConnectionUtil;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import Model.Message;
+
+public class MessageDAO {
+    Connection conx = ConnectionUtil.getConnection();
+
+
+    public Message create(Message message) throws SQLException{
+
+        String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?)";
+
+        PreparedStatement ps = conx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setInt(1, message.getPosted_by());
+        ps.setString(2, message.getMessage_text());
+        ps.setLong(3, message.getTime_posted_epoch());
+
+        int rowsAffected = ps.executeUpdate();
+
+        if(rowsAffected > 0){
+            ResultSet rs = ps.getGeneratedKeys();
+            if(rs.next()){
+                message.setMessage_id(rs.getInt(1));
+            }
+        }
+        return message;
+    }
+}
