@@ -5,7 +5,7 @@ import java.util.Map;
 
 import Exception.UsernameExistsException;
 import Model.Account;
-import Service.UserRegistrationService;
+import Service.UserAuthenticationService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -15,7 +15,7 @@ import io.javalin.http.Context;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
-    private final UserRegistrationService userRegistrationService = new UserRegistrationService();
+    private final UserAuthenticationService userAuthenticationService = new UserAuthenticationService();
     
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
@@ -34,7 +34,10 @@ public class SocialMediaController {
         });
         
         app.post("register", this::register );
+        app.post("login", this::login);
         return app;
+
+    
     }
 
     /**
@@ -49,9 +52,22 @@ public class SocialMediaController {
         String username = account.getUsername();
         String password = account.getPassword();
 
-        Account register = userRegistrationService.register(username, password);
+        Account register = userAuthenticationService.register(username, password);
 
         context.json(register);
         
+    }
+
+    private void login(Context context) throws SQLException{
+        Account account = context.bodyAsClass(Account.class);
+
+        String username = account.getUsername();
+        String password = account.getPassword();
+
+        Boolean logged_in = userAuthenticationService.login(username, password);
+        
+        context.status(logged_in ? 200 : 401).json(Map.of(
+            "logged_in" , logged_in
+        ));
     }
 }

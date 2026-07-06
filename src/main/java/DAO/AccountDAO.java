@@ -43,4 +43,18 @@ public class AccountDAO {
         return rs.next();
 
     }
+
+    public String getStoredPassword(String username) throws SQLException{
+        String query = "SELECT password FROM account WHERE username = ? ";
+
+        PreparedStatement ps = conx.prepareStatement(query);
+        ps.setString(1, username);
+
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            return rs.getString(1);
+        }
+        return "";
+    }
+    
 }
