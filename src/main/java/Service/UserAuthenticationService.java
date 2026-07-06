@@ -3,6 +3,8 @@ package Service;
 import java.sql.SQLException;
 
 import DAO.AccountDAO;
+import Exception.InvalidPasswordException;
+import Exception.InvalidUsernameException;
 import Exception.UsernameExistsException;
 import Model.Account;
 
@@ -33,13 +35,13 @@ public class UserAuthenticationService {
         Account passwordDB  = accountDAO.getAccountByUsername(account.getUsername());
 
         if (passwordDB == null) {
-            throw new IllegalArgumentException("User not found");
+            throw new InvalidUsernameException("User not found");
         }
 
         if(passwordDB.getPassword().equals(account.getPassword())){
             return passwordDB;
         }else{
-            throw new IllegalArgumentException("Invalid password");
+            throw new InvalidPasswordException("Invalid password");
         }
         
       

@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import Exception.InvalidPasswordException;
+import Exception.InvalidUsernameException;
 import Exception.UsernameExistsException;
 import Model.Account;
 import Model.Message;
@@ -35,6 +37,13 @@ public class SocialMediaController {
         app.exception(UsernameExistsException.class, (e, ctx) -> {
             ctx.status(400);
         });
+        app.exception(InvalidUsernameException.class, (e, ctx) -> {
+            ctx.status(401);
+        });
+        app.exception(InvalidPasswordException.class, (e, ctx) -> {
+            ctx.status(401);
+        });
+
         
         app.post("register", this::register );
         app.post("login", this::login);
