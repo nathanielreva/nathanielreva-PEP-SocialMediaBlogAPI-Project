@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import Model.Message;
 
@@ -31,5 +33,27 @@ public class MessageDAO {
             }
         }
         return message;
+    }
+
+    public List<Message> getAllMessage() throws SQLException {
+
+        List<Message> messages = new ArrayList<>();
+
+        String sql = "SELECT * FROM message";
+
+        PreparedStatement ps = conx.prepareStatement(sql);
+
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            Message message = new Message();
+            message.setMessage_id(rs.getInt("message_id"));
+            message.setPosted_by(rs.getInt("posted_by"));
+            message.setMessage_text(rs.getString("message_text"));
+            message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+
+            messages.add(message);
+        }
+
+        return messages;
     }
 }

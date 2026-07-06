@@ -1,6 +1,7 @@
 package Controller;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 import Exception.UsernameExistsException;
@@ -38,6 +39,7 @@ public class SocialMediaController {
         app.post("register", this::register );
         app.post("login", this::login);
         app.post("messages", this::messages);
+        app.get("messages", this::getMessages);
         return app;
 
     
@@ -78,6 +80,13 @@ public class SocialMediaController {
         
         context.json(ms.addMessage(message));
 
+    }
 
+    private void getMessages(Context context) throws SQLException{
+        MessageService ms = new MessageService();
+
+        List<Message> messages = ms.getAllMessage();
+
+        context.json(messages);
     }
 }

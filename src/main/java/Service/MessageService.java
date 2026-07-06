@@ -1,5 +1,6 @@
 package Service;
 import java.sql.SQLException;
+import java.util.List;
 
 import DAO.AccountDAO;
 import DAO.MessageDAO;
@@ -28,5 +29,9 @@ public class MessageService {
         //add message 
         return messageDAO.create(message);
 
+    }
+
+    public List<Message> getAllMessage() throws SQLException {
+        return messageDAO.getAllMessage();
     }
 }
