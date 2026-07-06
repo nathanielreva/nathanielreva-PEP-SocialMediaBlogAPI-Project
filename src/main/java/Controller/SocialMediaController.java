@@ -49,10 +49,8 @@ public class SocialMediaController {
     private void register(Context context) throws SQLException{
         Account account = context.bodyAsClass(Account.class); 
 
-        String username = account.getUsername();
-        String password = account.getPassword();
 
-        Account register = userAuthenticationService.register(username, password);
+        Account register = userAuthenticationService.register(account);
 
         context.json(register);
         
@@ -61,10 +59,8 @@ public class SocialMediaController {
     private void login(Context context) throws SQLException{
         Account account = context.bodyAsClass(Account.class);
 
-        String username = account.getUsername();
-        String password = account.getPassword();
 
-        Boolean logged_in = userAuthenticationService.login(username, password);
+        Boolean logged_in = userAuthenticationService.login(account);
         
         context.status(logged_in ? 200 : 401).json(Map.of(
             "logged_in" , logged_in
