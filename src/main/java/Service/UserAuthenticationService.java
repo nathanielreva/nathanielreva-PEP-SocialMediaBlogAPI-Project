@@ -25,19 +25,24 @@ public class UserAuthenticationService {
         
     };
 
-    public Boolean login(Account account) throws SQLException{
+    public Account login(Account account) throws SQLException{
         if(account.getUsername() == null || account.getUsername().isBlank()){
             throw new IllegalArgumentException("Username cannot be null or blank");
         }
 
-        String passwordDB  = accountDAO.getAccountPasswordByUsername(account.getUsername());
+        Account passwordDB  = accountDAO.getAccountByUsername(account.getUsername());
 
-        if(passwordDB.equals(account.getPassword())){
-            return true;
+        if (passwordDB == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        if(passwordDB.getPassword().equals(account.getPassword())){
+            return passwordDB;
         }else{
-            return false;
+            throw new IllegalArgumentException("Invalid password");
         }
         
+      
     }
 
 }

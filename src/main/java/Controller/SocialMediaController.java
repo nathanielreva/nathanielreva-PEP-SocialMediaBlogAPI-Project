@@ -65,11 +65,9 @@ public class SocialMediaController {
         Account account = context.bodyAsClass(Account.class);
 
 
-        Boolean logged_in = userAuthenticationService.login(account);
+        Account logged_in = userAuthenticationService.login(account);
         
-        context.status(logged_in ? 200 : 401).json(Map.of(
-            "logged_in" , logged_in
-        ));
+        context.json(logged_in);
     }
 
     private void messages(Context context) throws SQLException{
