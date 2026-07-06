@@ -29,11 +29,11 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
 
         app.exception(IllegalArgumentException.class, (e, ctx) -> {
-            ctx.status(400).json(Map.of("exception", e.getMessage()));
+            ctx.status(400);
         });
 
         app.exception(UsernameExistsException.class, (e, ctx) -> {
-            ctx.status(400).json(Map.of("exeption", e.getMessage()));
+            ctx.status(400);
         });
         
         app.post("register", this::register );
