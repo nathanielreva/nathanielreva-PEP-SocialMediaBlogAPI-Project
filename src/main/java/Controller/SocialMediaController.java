@@ -21,7 +21,8 @@ import io.javalin.http.Context;
  */
 public class SocialMediaController {
     private final UserAuthenticationService userAuthenticationService = new UserAuthenticationService();
-    
+    private final MessageService ms = new MessageService();
+
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -49,6 +50,10 @@ public class SocialMediaController {
         app.post("login", this::login);
         app.post("messages", this::messages);
         app.get("messages", this::getMessages);
+        app.get("/messages/{message_id}", this::getMessageById);
+        app.delete("/messages/{message_id}", this::deleteMessageById);
+        app.patch("/messages/{message_id}", this::patchMessageById);
+        app.get("/accounts/{account_id}/messages", this::getAllMessagesByUserAccountId);
         return app;
 
     
@@ -62,38 +67,72 @@ public class SocialMediaController {
 
     private void register(Context context) throws SQLException{
         Account account = context.bodyAsClass(Account.class); 
-
-
         Account register = userAuthenticationService.register(account);
-
         context.json(register);
-        
     }
 
     private void login(Context context) throws SQLException{
         Account account = context.bodyAsClass(Account.class);
-
-
         Account logged_in = userAuthenticationService.login(account);
-        
         context.json(logged_in);
     }
 
     private void messages(Context context) throws SQLException{
-
-        Message message = context.bodyAsClass(Message.class);
-
-        MessageService ms = new MessageService();
-        
+        Message message = context.bodyAsClass(Message.class);        
         context.json(ms.addMessage(message));
-
     }
 
+
     private void getMessages(Context context) throws SQLException{
-        MessageService ms = new MessageService();
-
         List<Message> messages = ms.getAllMessage();
-
         context.json(messages);
+        if(messages != null){
+            context.json(messages);
+        }else{
+            context.status(200);
+        }
+    }
+
+    private void getMessageById(Context context)throws SQLException{
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+        Message msg = ms.getMessageById(message_id);
+        if(msg != null){
+            context.json(msg);
+        }else{
+            context.status(200);
+        }
+    }
+
+    private void deleteMessageById(Context context)throws SQLException{
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+    
+        int count = ms.deleteMessageById(message_id);
+        if(count > 0){
+            context.status(200).json(count);
+        }else{
+            context.status(200);
+        }
+    }
+
+    private void patchMessageById(Context context)throws SQLException{
+
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+        Message message = context.bodyAsClass(Message.class);
+ 
+        int count = ms.patchMessageById(message_id, message.getMessage_text());
+        
+        if(count > 0){
+            context.status(200).json(count);
+        }else{
+            context.status(400);
+        }
+    }
+
+    public void getAllMessagesByUserAccountId(Context context) throws SQLException{
+        Integer account_id = Integer.parseInt(context.pathParam("account_id"));
+
+        context.json(ms.getAllMessagesByUserAccountId(account_id));
+        
+
     }
 }

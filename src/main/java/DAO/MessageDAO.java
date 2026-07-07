@@ -56,4 +56,67 @@ public class MessageDAO {
 
         return messages;
     }
+
+    public Message getMessageById(int id) throws SQLException{
+
+        String sql = "SELECT * FROM message WHERE message_id = ?";
+        PreparedStatement ps = conx.prepareStatement(sql);
+
+        ps.setInt(1, id);
+
+        ResultSet rs = ps.executeQuery();
+        
+        if(rs.next()){
+            return new Message(
+                rs.getInt("message_id"),
+                rs.getInt("posted_by"),
+                rs.getString("message_text"),
+                rs.getLong("time_posted_epoch")
+            );
+        }
+        return null;
+    }
+
+    public int deleteMessageById(int id) throws SQLException{
+        String sql = "DELETE FROM message WHERE message_id = ?";
+        PreparedStatement ps = conx.prepareStatement(sql);
+        ps.setInt(1, id);
+        return ps.executeUpdate();
+    }
+
+    public int patchMessageById(int id, String message_text) throws SQLException {
+        String sql = "UPDATE message SET message_text = ? WHERE message_id = ? ";
+        PreparedStatement ps = conx.prepareStatement(sql);
+
+        ps.setString(1, message_text);
+        ps.setInt(2, id);
+
+        int rowsAffected = ps.executeUpdate();
+
+        return rowsAffected;
+    }
+
+    public ArrayList<Message> getAllMessagesByUserAccountId(int id) throws SQLException{
+        ArrayList<Message> messages = new ArrayList<>();
+
+        String sql = "SELECT * FROM message WHERE posted_by = ?";
+        PreparedStatement ps = conx.prepareStatement(sql);
+
+        ps.setInt(1, id);
+
+        ResultSet rs = ps.executeQuery();
+
+        while(rs.next()){
+            messages.add(
+                new Message(
+                    rs.getInt("message_id"),
+                    rs.getInt("posted_by"),
+                    rs.getString("message_text"),
+                    rs.getLong("time_posted_epoch")
+                )
+            );
+        }
+        return messages;
+    }
+
 }

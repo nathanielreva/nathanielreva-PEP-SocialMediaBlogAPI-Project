@@ -34,4 +34,30 @@ public class MessageService {
     public List<Message> getAllMessage() throws SQLException {
         return messageDAO.getAllMessage();
     }
+
+    public Message getMessageById(int id) throws SQLException{
+        return messageDAO.getMessageById(id);
+    }
+
+    public int deleteMessageById(int id) throws SQLException{
+        return messageDAO.deleteMessageById(id);
+    }
+
+    public int patchMessageById(int id, String message_text) throws SQLException{
+       
+        if(message_text == null || message_text.isBlank()){
+            throw new IllegalArgumentException("Message text cannot be blank");
+        }
+
+        if(message_text.length() > 255){
+            throw new IllegalArgumentException("Message text cannot be greater than 255");
+        }
+
+        return messageDAO.patchMessageById(id, message_text);
+    }
+
+    public List<Message> getAllMessagesByUserAccountId(int id) throws SQLException{
+        return messageDAO.getAllMessagesByUserAccountId(id);
+    }
+
 }
