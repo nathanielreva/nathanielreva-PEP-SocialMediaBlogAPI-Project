@@ -39,11 +39,11 @@ public class MessageService {
         return messageDAO.getMessageById(id);
     }
 
-    public int deleteMessageById(int id) throws SQLException{
+    public Message deleteMessageById(int id) throws SQLException{
         return messageDAO.deleteMessageById(id);
     }
 
-    public int patchMessageById(int id, String message_text) throws SQLException{
+    public Message patchMessageById(int id, String message_text) throws SQLException{
        
         if(message_text == null || message_text.isBlank()){
             throw new IllegalArgumentException("Message text cannot be blank");

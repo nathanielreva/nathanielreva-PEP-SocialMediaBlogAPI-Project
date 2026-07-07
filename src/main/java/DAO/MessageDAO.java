@@ -77,14 +77,28 @@ public class MessageDAO {
         return null;
     }
 
-    public int deleteMessageById(int id) throws SQLException{
+    public Message deleteMessageById(int id) throws SQLException{
+        Message message = this.getMessageById(id);
+
+        if(message == null){
+            return null;
+        }
+
         String sql = "DELETE FROM message WHERE message_id = ?";
         PreparedStatement ps = conx.prepareStatement(sql);
         ps.setInt(1, id);
-        return ps.executeUpdate();
+        ps.execute();
+
+        return message;
     }
 
-    public int patchMessageById(int id, String message_text) throws SQLException {
+    public Message patchMessageById(int id, String message_text) throws SQLException {
+        Message message = this.getMessageById(id);
+
+        if(message == null){
+            return null;
+        }
+
         String sql = "UPDATE message SET message_text = ? WHERE message_id = ? ";
         PreparedStatement ps = conx.prepareStatement(sql);
 
@@ -92,8 +106,11 @@ public class MessageDAO {
         ps.setInt(2, id);
 
         int rowsAffected = ps.executeUpdate();
+        if(rowsAffected == 1){
+            message.setMessage_text(message_text);
+        }
 
-        return rowsAffected;
+        return message;
     }
 
     public ArrayList<Message> getAllMessagesByUserAccountId(int id) throws SQLException{

@@ -106,9 +106,9 @@ public class SocialMediaController {
     private void deleteMessageById(Context context)throws SQLException{
         int message_id = Integer.parseInt(context.pathParam("message_id"));
     
-        int count = ms.deleteMessageById(message_id);
-        if(count > 0){
-            context.status(200).json(count);
+        Message message = ms.deleteMessageById(message_id);
+        if(message != null){
+            context.json(message);
         }else{
             context.status(200);
         }
@@ -119,10 +119,10 @@ public class SocialMediaController {
         int message_id = Integer.parseInt(context.pathParam("message_id"));
         Message message = context.bodyAsClass(Message.class);
  
-        int count = ms.patchMessageById(message_id, message.getMessage_text());
+        Message new_message = ms.patchMessageById(message_id, message.getMessage_text());
         
-        if(count > 0){
-            context.status(200).json(count);
+        if(new_message != null){
+            context.json(new_message);
         }else{
             context.status(400);
         }
